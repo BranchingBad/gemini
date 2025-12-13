@@ -1,4 +1,9 @@
-flask
-flask-cors
-google-genai
-Pillow  
+flask>=3.0.0
+flask-cors>=4.0.0
+google-generativeai>=0.3.0
+pillow>=10.0.0
+waitress
+
+# Development dependencies
+black
+isort

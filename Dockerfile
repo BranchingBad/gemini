@@ -1,7 +1,5 @@
 # Dockerfile
 
-ARG GEMINI_API_KEY=
-
 # Stage 1: Build the Python application
 FROM python:3.9-slim AS build
 
@@ -12,25 +10,30 @@ COPY requirements.txt .
 # Install dependencies (will now include Pillow)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files (app.py and gemini-test.py)
-COPY app.py .
-COPY gemini-test.py . 
+# Copy the entire src directory
+COPY src/ .
 
 # Stage 2: Serve the front end and run the backend
 FROM python:3.9-slim
 
 WORKDIR /app
 
-ENV GEMINI_API_KEY=${GEMINI_API_KEY}
+# Create a non-root user
+RUN useradd --create-home appuser
+USER appuser
 
 # Copy dependencies from the build stage
-# Copy the *installed* dependencies, not the whole site-packages
 COPY --from=build /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
-COPY --from=build /app/app.py /app/
 
-# Copy the HTML file into the correct directory.
-COPY gemini_frontend.html /app/static_html/gemini_frontend.html
+# Copy the application code
+COPY --from=build /app/gemini_project/ /app/gemini_project/
+
+# Set the working directory to the project folder
+WORKDIR /app/gemini_project
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+ENV FLASK_APP=main.py
+
+# Use waitress to run the application
+CMD ["waitress-serve", "--host=0.0.0.0", "--port=5000", "main:app"]

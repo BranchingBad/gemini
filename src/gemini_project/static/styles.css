@@ -1,0 +1,28 @@
+/* Basic styles for the Gemini frontend */
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* Style for response text output */
+.response-text {
+    white-space: pre-wrap; /* Preserve whitespace and handle wrapping */
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+/* Custom modal for alerts */
+#customAlert {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: translateY(-20px);
+}
+#customAlert.show {
+    opacity: 1;
+    transform: translateY(0);
+}
